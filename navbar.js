@@ -83,3 +83,13 @@ document.addEventListener("DOMContentLoaded", () => {
   checkScreenSize();
   window.addEventListener("resize", checkScreenSize);
 });
+
+// Load footer.html into the end of the body
+fetch('footer.html')
+  .then(res => res.text())
+  .then(data => {
+    const footer = document.createElement('div');
+    footer.innerHTML = data;
+    document.body.appendChild(footer);
+  });
+
