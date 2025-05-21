@@ -1,4 +1,5 @@
 name: Update Fun Stats
+
 on:
   workflow_dispatch:  # Allows manual runs
   schedule:
@@ -7,18 +8,39 @@ on:
 jobs:
   update-stats:
     runs-on: ubuntu-latest
-    permissions:  # Minimal permissions
+    permissions:
       contents: write
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: ⬇️ Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python generate_stats.py
-      - name: Commit Stats
+
+      - name: 📁 List Files for Debugging
+        run: |
+          ls -la
+          find . -name "*.html"
+
+      - name: 🧠 Run Stats Script
+        run: python generate_stats.py
+
+      - name: 📄 Display Output File
+        run: cat stats.html || echo "❌ stats.html not found"
+
+      - name: 🚀 Commit Stats
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add stats.html
           git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-update stats"
           git push
+
+      - name: 📦 Upload stats.html Artifact (for debugging)
+        uses: actions/upload-artifact@v4
+        with:
+          name: stats
+          path: stats.html
