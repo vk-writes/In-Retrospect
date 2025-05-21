@@ -4,9 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
       <button class="close-btn" id="closeSidebar" aria-label="Close menu">&times;</button>
       <nav>
         <a href="index.html" class="nav-link">Home</a>
+        <a href="articles.html" class="nav-link">Articles</a>
         <a href="about.html" class="nav-link">About</a>
         <a href="contact.html" class="nav-link">Contact</a>
-        <a href="articles.html" class="nav-link">Articles</a>
+        
       </nav>
       <button id="darkModeToggle" class="dark-toggle" aria-label="Toggle dark mode">🌓 Dark Mode</button>
     </div>
