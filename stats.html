@@ -8,24 +8,70 @@
 </head>
 <body>
   <h1>Stats Report</h1>
-  <div class="section">
-    <strong>Last Updated:</strong> 2025-05-21 18:35 UTC<br/>
-    <strong>Article Count:</strong> 3<br/>
-    <strong>Total Words:</strong> 943<br/>
-    <strong>Average Words per Article:</strong> 314<br/>
-    <strong>Longest Article:</strong> foodloss<br/>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h2>General Stats</h2>
+      <p><strong>Last Updated:</strong> 2025-05-21 18:43 UTC</p>
+      <p><strong>Article Count:</strong> 3</p>
+      <p><strong>Total Words:</strong> 774</p>
+      <p><strong>Average Words per Article:</strong> 258</p>
+      <p><strong>Longest Article:</strong> foodloss</p>
+    </div>
+
+    <div class="stat-card">
+      <h2>Top Words</h2>
+      <ul>
+        <li>food</li><li>flw</li><li>study</li><li>loss</li><li>government</li><li>india</li><li>estimates</li><li>estimate</li><li>fruits</li><li>need</li>
+      </ul>
+    </div>
+
+    <div class="stat-card">
+      <h2>Entity Counts (Top 10)</h2>
+      <ul>
+        <li>ORG: 26</li><li>DATE: 9</li><li>GPE: 6</li><li>PERSON: 3</li><li>NORP: 2</li><li>CARDINAL: 1</li><li>ORDINAL: 1</li><li>PERCENT: 1</li>
+      </ul>
+    </div>
   </div>
-  <div class="section">
-    <h2>Top Words</h2>
-    <ul>
-      <li>food</li><li>flw</li><li>study</li><li>loss</li><li>government</li><li>india</li><li>estimates</li><li>estimate</li><li>fruits</li><li>need</li>
-    </ul>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h2>Lexical Diversities</h2>
+      <ul>
+        <li>articles.html: 1.00</li><li>footer.html: 1.00</li><li>foodloss.html: 0.51</li>
+      </ul>
+    </div>
+
+    <div class="stat-card">
+      <h2>Sentence Stats</h2>
+      <ul>
+        <li>articles.html: Avg Len: 7.0, Longest: 7, Count: 1</li><li>footer.html: Avg Len: 5.0, Longest: 8, Count: 3</li><li>foodloss.html: Avg Len: 29.7, Longest: 54, Count: 31</li>
+      </ul>
+    </div>
+
+    <div class="stat-card">
+      <h2>Readability Scores</h2>
+      <ul>
+        <li>articles.html: Flesch Ease: -106.4, Flesch-Kincaid Grade: 28.8</li><li>footer.html: Flesch Ease: 29.5, Flesch-Kincaid Grade: 11.1</li><li>foodloss.html: Flesch Ease: 37.2, Flesch-Kincaid Grade: 14.0</li>
+      </ul>
+    </div>
   </div>
-  <div class="section">
-    <h2>Entity Counts (Top 10)</h2>
-    <ul>
-      <li>ORG: 26</li><li>DATE: 9</li><li>GPE: 6</li><li>PERSON: 3</li><li>NORP: 2</li><li>CARDINAL: 1</li><li>ORDINAL: 1</li><li>PERCENT: 1</li>
-    </ul>
+
+  <div class="stats-grid">
+    <div class="stat-card" style="grid-column: span 2;">
+      <h2>Sentiments</h2>
+      <ul>
+        <li>articles.html: Polarity: 0.00, Subjectivity: 0.00</li><li>footer.html: Polarity: 0.00, Subjectivity: 0.00</li><li>foodloss.html: Polarity: 0.04, Subjectivity: 0.48</li>
+      </ul>
+    </div>
   </div>
+
+  <div class="stat-section">
+    <h2>Keywords Extracted</h2>
+    <h3>articles.html</h3><ul><li>food loss</li><li>food</li><li>loss</li></ul><h3>footer.html</h3><ul><li>Kumar</li><li>All rights</li><li>otherwise specified</li><li>All</li><li>specified</li><li>All rights reserved</li><li>unless otherwise specified</li><li>rights</li><li>reserved</li><li>unless</li></ul><h3>foodloss.html</h3><ul><li>Loss Vasanth Kumar</li><li>having overtaken China</li><li>Food Loss Vasanth</li><li>Vasanth Kumar</li><li>populous country two</li><li>country two years</li><li>Food Paradox</li><li>India having overtaken</li><li>Food Loss</li><li>overtaken China</li></ul>
+  </div>
+
+  <img src="wordcloud.png" alt="Word Cloud" style="max-width:100%; border-radius: 1rem; margin-top: 2rem;" />
 </body>
 </html>
+    
