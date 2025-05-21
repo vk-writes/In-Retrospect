@@ -8,12 +8,10 @@ from textstat import flesch_reading_ease, flesch_kincaid_grade
 from textblob import TextBlob
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
-import yake  # <-- Added yake for keyword extraction
+import yake  # Lightweight keyword extractor (no NLTK!)
 
 # Load spaCy English model
 nlp = spacy.load("en_core_web_sm")
-
-# ... rest of your code ...
 
 # Configuration
 EXCLUDED_FILES = {
@@ -60,16 +58,10 @@ def analyze_articles():
     keywords = {}
     all_text_for_wordcloud = []
 
-    # Setup YAKE keyword extractor
-    language = "en"
-    max_ngram_size = 3
-    deduplication_threshold = 0.9
-    num_of_keywords = 10
-    kw_extractor = yake.KeywordExtractor(lan=language,
-                                        n=max_ngram_size,
-                                        dedupLim=deduplication_threshold,
-                                        top=num_of_keywords,
-                                        stopwords=STOPWORDS)
+    # YAKE configuration
+    kw_extractor = yake.KeywordExtractor(
+        lan="en", n=3, dedupLim=0.9, top=10, stopwords=STOPWORDS
+    )
 
     print("Scanning articles...")
     for filename in os.listdir('.'):
@@ -94,7 +86,7 @@ def analyze_articles():
                 lexical_diversities[filename] = len(set(words)) / len(words) if words else 0
 
                 # Sentence stats
-                doc_full = nlp(text)  # Re-parse for sentence boundaries
+                doc_full = nlp(text)
                 lengths = [len(sent) for sent in doc_full.sents]
                 avg_sentence_length = sum(lengths) / len(lengths) if lengths else 0
                 longest_sentence_length = max(lengths) if lengths else 0
@@ -126,7 +118,7 @@ def analyze_articles():
 
                 # Keyword extraction with YAKE
                 extracted_keywords = kw_extractor.extract_keywords(text)
-                keywords[filename] = [kw for kw, score in extracted_keywords]
+                keywords[filename] = [kw for kw, _ in extracted_keywords]
 
                 all_text_for_wordcloud.append(text)
 
@@ -161,11 +153,3 @@ def analyze_articles():
         json.dump(stats, f, indent=2)
 
     return stats
-
-# ... your generate_html() function remains unchanged ...
-
-if __name__ == '__main__':
-    stats = analyze_articles()
-    with open('stats.html', 'w', encoding='utf-8') as f:
-        f.write(generate_html(stats))
-    print("✅ Full supercharged stats.html and wordcloud.png generated successfully!")
