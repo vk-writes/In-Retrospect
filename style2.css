@@ -1,74 +1,124 @@
-/* General styles */
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&family=Figtree:wght@400;600&family=Jost:wght@400;600&family=Alegreya+SC:wght@700&display=swap');
+
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-                 Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    background-color: #fdfaf6;
-    color: #333;
-    margin: 0;
-    padding: 2rem;
-    line-height: 1.6;
+  font-family: 'Figtree', 'Jost', sans-serif;
+  line-height: 1.6;
+  margin: 0 auto;
+  padding: 2rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  max-width: 1200px;
 }
 
-/* Heading */
 h1 {
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #2c3e50;
+  font-family: 'Alegreya SC', serif;
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--heading-color);
+  border-bottom: 2px solid var(--heading-border);
+  padding-bottom: 0.4rem;
 }
 
-/* Grid layout */
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
-/* Individual stat cards */
 .stat-card {
-    background-color: #fff;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.1);
 }
 
 .stat-card h2 {
-    margin-top: 0;
-    font-size: 1.25rem;
-    color: #34495e;
-    margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+  font-family: 'EB Garamond', serif;
+  color: var(--accent-color);
+  margin-bottom: 0.8rem;
 }
 
-.stat-card p, .stat-card li {
-    margin: 0.3rem 0;
-    font-size: 0.95rem;
+.stat-card p,
+.stat-card li {
+  font-size: 0.95rem;
+  margin: 0.3rem 0;
 }
 
-/* Chart */
 canvas {
-    display: block;
-    margin: 2rem auto;
-    max-width: 100%;
-    background-color: #fff;
-    border-radius: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  display: block;
+  margin: 2rem auto;
+  max-width: 100%;
+  background: var(--card-bg);
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* Responsive tweaks */
-@media (max-width: 600px) {
-    body {
-        padding: 1rem;
-    }
+/* Theme variables */
+:root {
+  --bg: #fdfaf6;
+  --text-color: #1a1a1a;
+  --card-bg: #ffffff;
+  --heading-color: #0a9396;
+  --heading-border: #94d2bd;
+  --accent-color: #005f73;
+}
 
-    h1 {
-        font-size: 2rem;
-    }
+.theme-dark {
+  --bg: #2e3440;
+  --text-color: #e5e9f0;
+  --card-bg: #3b4252;
+  --heading-color: #81a1c1;
+  --heading-border: #4c566a;
+  --accent-color: #88c0d0;
+}
+
+/* Apply background and text colors based on theme */
+body.theme-light {
+  background-color: var(--bg);
+  color: var(--text-color);
+}
+
+body.theme-dark {
+  background-color: var(--bg);
+  color: var(--text-color);
+}
+
+.theme-light .stat-card {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+.theme-dark .stat-card {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+}
+
+a {
+  text-decoration: underline;
+  color: var(--accent-color);
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  text-decoration: none;
+  color: var(--heading-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
 }
