@@ -1,7 +1,4 @@
-// navbar.js
-
 document.addEventListener("DOMContentLoaded", () => {
-  // Create sidebar HTML
   const sidebarHTML = `
     <div class="sidebar" id="sidebar" aria-hidden="true">
       <button class="close-btn" id="closeSidebar" aria-label="Close menu">&times;</button>
@@ -17,10 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
     <button class="hamburger" id="openSidebar" aria-label="Open menu">&#9776;</button>
   `;
 
-  // Insert sidebar and hamburger at the top of body
   document.body.insertAdjacentHTML("afterbegin", sidebarHTML);
 
-  // Elements
   const sidebar = document.getElementById("sidebar");
   const openBtn = document.getElementById("openSidebar");
   const closeBtn = document.getElementById("closeSidebar");
@@ -28,7 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const darkToggleBtn = document.getElementById("darkModeToggle");
   const navLinks = document.querySelectorAll(".nav-link");
 
-  // Functions to open/close sidebar
   function openSidebar() {
     sidebar.setAttribute("aria-hidden", "false");
     sidebar.classList.add("open");
@@ -45,33 +39,33 @@ document.addEventListener("DOMContentLoaded", () => {
   overlay.addEventListener("click", closeSidebar);
 
   // Highlight active nav link based on current URL
-  const currentPath = window.location.pathname.split("/").pop(); // get current file name
+  const currentPath = window.location.pathname.split("/").pop();
   navLinks.forEach(link => {
-    if (link.getAttribute("href") === currentPath || 
-       (link.getAttribute("href") === "index.html" && currentPath === "")) {
+    if (
+      link.getAttribute("href") === currentPath ||
+      (link.getAttribute("href") === "index.html" && currentPath === "")
+    ) {
       link.classList.add("active");
     }
   });
 
-  // Dark mode toggle
+  // Dark mode toggle function
   function toggleDarkMode() {
-    document.body.classList.toggle("dark-mode");
-    if (document.body.classList.contains("dark-mode")) {
-      localStorage.setItem("darkMode", "enabled");
-      darkToggleBtn.textContent = "🌞 Light Mode";
-    } else {
-      localStorage.setItem("darkMode", "disabled");
+    if (document.body.classList.contains("theme-dark")) {
+      document.body.classList.replace("theme-dark", "theme-light");
+      localStorage.setItem("theme", "light");
       darkToggleBtn.textContent = "🌓 Dark Mode";
+    } else {
+      document.body.classList.replace("theme-light", "theme-dark");
+      localStorage.setItem("theme", "dark");
+      darkToggleBtn.textContent = "🌞 Light Mode";
     }
   }
 
-  // Initialize dark mode state from localStorage
-  if (localStorage.getItem("darkMode") === "enabled") {
-    document.body.classList.add("dark-mode");
-    darkToggleBtn.textContent = "🌞 Light Mode";
-  } else {
-    darkToggleBtn.textContent = "🌓 Dark Mode";
-  }
+  // Initialize theme from localStorage or default to light
+  const savedTheme = localStorage.getItem("theme") || "light";
+  document.body.classList.add(savedTheme === "dark" ? "theme-dark" : "theme-light");
+  darkToggleBtn.textContent = savedTheme === "dark" ? "🌞 Light Mode" : "🌓 Dark Mode";
 
   darkToggleBtn.addEventListener("click", toggleDarkMode);
 
