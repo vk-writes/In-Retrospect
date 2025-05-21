@@ -355,4 +355,32 @@ h3 { font-size: 1.5rem; }
 }
 .dark-toggle:hover {
   background-color: #5e81ac;
+
+  /* Dark mode toggle button fixed top-right */
+.dark-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1200;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 5px;
+  border: none;
+  background-color: #81a1c1;
+  color: #2e3440;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-toggle:hover {
+  background-color: #5e81ac;
+}
+
+/* Hide dark-toggle inside sidebar if present */
+.sidebar .dark-toggle {
+  display: none;
+}
+
 }
