@@ -1,174 +1,100 @@
-import os
-import re
-import spacy
 import json
-from collections import Counter, defaultdict
 from datetime import datetime
-from textstat import flesch_reading_ease, flesch_kincaid_grade
-from textblob import TextBlob
-from wordcloud import WordCloud
-import yake  # Lightweight keyword extractor (no NLTK!)
 
-# Load spaCy English model
-nlp = spacy.load("en_core_web_sm")
+def generate_full_html_report():
+    with open("stats_data.json", "r", encoding="utf-8") as f:
+        stats = json.load(f)
 
-# Configuration
-EXCLUDED_FILES = {
-    'index.html', 'stats.html', 'about.html', 'contact.html',
-    'style.css', 'style2.css', 'navbar.js', '404.html'
-}
-STOPWORDS = {
-    'the', 'and', 'of', 'to', 'a', 'in', 'that', 'it', 'is', 'was',
-    'for', 'with', 'on', 'as', 'at', 'by', 'this', 'be', 'are'
-}
-
-def analyze_articles():
-    total_words = 0
-    articles = []
-    word_counter = Counter()
-    pos_counters = defaultdict(Counter)
-    lexical_diversities = {}
-    sentence_stats = {}
-    readabilities = {}
-    sentiments = {}
-    entity_counter = Counter()
-    keywords = {}
-    all_text_for_wordcloud = []
-
-    # YAKE configuration
-    kw_extractor = yake.KeywordExtractor(
-        lan="en", n=3, dedupLim=0.9, top=10, stopwords=STOPWORDS
-    )
-
-    print("Scanning articles...")
-    for filename in os.listdir('.'):
-        if filename.endswith('.html') and filename not in EXCLUDED_FILES:
-            print(f"  Processing {filename}")
-            with open(filename, 'r', encoding='utf-8') as f:
-                raw_html = f.read()
-                text = re.sub(r'<[^>]+>', ' ', raw_html)
-                doc = nlp(text.lower())
-
-                articles.append(filename)
-                total_words += len(doc)
-
-                # Word counts and POS
-                for token in doc:
-                    if token.is_alpha and not token.is_stop:
-                        word_counter[token.text] += 1
-                        pos_counters[token.pos_][token.text] += 1
-
-                # Lexical diversity
-                words = [t.text for t in doc if t.is_alpha]
-                lexical_diversities[filename] = len(set(words)) / len(words) if words else 0
-
-                # Sentence stats
-                doc_full = nlp(text)
-                lengths = [len(sent) for sent in doc_full.sents]
-                avg_sentence_length = sum(lengths) / len(lengths) if lengths else 0
-                longest_sentence_length = max(lengths) if lengths else 0
-                sentence_stats[filename] = {
-                    'avg_sentence_length': avg_sentence_length,
-                    'longest_sentence_length': longest_sentence_length,
-                    'sentence_count': len(lengths)
-                }
-
-                # Readability
-                flesch_score = flesch_reading_ease(text)
-                fk_grade = flesch_kincaid_grade(text)
-                readabilities[filename] = {
-                    'flesch_reading_ease': flesch_score,
-                    'flesch_kincaid_grade': fk_grade
-                }
-
-                # Sentiment
-                blob = TextBlob(text)
-                sentiments[filename] = {
-                    'polarity': blob.sentiment.polarity,
-                    'subjectivity': blob.sentiment.subjectivity
-                }
-
-                # NER
-                doc_ner = nlp(text)
-                for ent in doc_ner.ents:
-                    entity_counter[ent.label_] += 1
-
-                # Keyword extraction with YAKE
-                extracted_keywords = kw_extractor.extract_keywords(text)
-                keywords[filename] = [kw for kw, _ in extracted_keywords]
-
-                all_text_for_wordcloud.append(text)
-
-    article_lengths = {name: os.path.getsize(name) for name in articles}
-    longest_article = max(article_lengths, key=article_lengths.get) if articles else "None"
-
-    # Generate word cloud image
-    combined_text = " ".join(all_text_for_wordcloud)
-    wc = WordCloud(width=800, height=400, background_color='white', stopwords=STOPWORDS).generate(combined_text)
-    wc.to_file("wordcloud.png")
-
-    stats = {
-        'article_count': len(articles),
-        'total_words': total_words,
-        'avg_words': total_words // len(articles) if articles else 0,
-        'top_words': [w for w, _ in word_counter.most_common(10)],
-        'longest_article': longest_article.replace('.html', ''),
-        'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M UTC'),
-        'pos_summary': {
-            pos: [w for w, _ in words.most_common(5)]
-            for pos, words in sorted(pos_counters.items())
-        },
-        'lexical_diversities': lexical_diversities,
-        'sentence_stats': sentence_stats,
-        'readabilities': readabilities,
-        'sentiments': sentiments,
-        'entity_counts': entity_counter.most_common(10),
-        'keywords': keywords
-    }
-
-    with open("stats_data.json", "w", encoding="utf-8") as f:
-        json.dump(stats, f, indent=2)
-
-    return stats
-
-
-def generate_html_report(stats):
+    # Build HTML content with all stats sections and link style2.css
     html = f"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Stats Report</title>
-  <link rel="stylesheet" href="style2.css" />
+<meta charset="UTF-8" />
+<title>Stats Report</title>
+<link rel="stylesheet" href="style2.css" />
 </head>
 <body>
   <h1>Stats Report</h1>
-  <div class="section">
-    <strong>Last Updated:</strong> {stats['last_updated']}<br/>
-    <strong>Article Count:</strong> {stats['article_count']}<br/>
-    <strong>Total Words:</strong> {stats['total_words']}<br/>
-    <strong>Average Words per Article:</strong> {stats['avg_words']}<br/>
-    <strong>Longest Article:</strong> {stats['longest_article']}<br/>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h2>Summary</h2>
+      <p><strong>Last Updated:</strong> {stats.get('last_updated', 'N/A')}</p>
+      <p><strong>Article Count:</strong> {stats.get('article_count', 0)}</p>
+      <p><strong>Total Words:</strong> {stats.get('total_words', 0)}</p>
+      <p><strong>Average Words per Article:</strong> {stats.get('avg_words', 0)}</p>
+      <p><strong>Longest Article:</strong> {stats.get('longest_article', 'N/A')}</p>
+    </div>
+
+    <div class="stat-card">
+      <h2>Top Words</h2>
+      <ul>
+        {"".join(f"<li>{word}</li>" for word in stats.get('top_words', []))}
+      </ul>
+    </div>
+
+    <div class="stat-card">
+      <h2>Entity Counts (Top 10)</h2>
+      <ul>
+        {"".join(f"<li>{entity}: {count}</li>" for entity, count in stats.get('entity_counts', []))}
+      </ul>
+    </div>
+
+    <div class="stat-card">
+      <h2>Lexical Diversity per Article</h2>
+      <ul>
+        {"".join(f"<li>{article}: {diversity:.2f}</li>" for article, diversity in stats.get('lexical_diversities', {}).items())}
+      </ul>
+    </div>
+
+    <div class="stat-card">
+      <h2>Readability Scores</h2>
+      <ul>
+      {"".join(
+          f"<li>{article}: Flesch Reading Ease {scores.get('flesch_reading_ease', 'N/A'):.2f}, FK Grade {scores.get('flesch_kincaid_grade', 'N/A'):.2f}</li>"
+          for article, scores in stats.get('readabilities', {}).items()
+      )}
+      </ul>
+    </div>
+
+    <div class="stat-card">
+      <h2>Sentiment Scores</h2>
+      <ul>
+      {"".join(
+          f"<li>{article}: Polarity {scores.get('polarity', 'N/A'):.2f}, Subjectivity {scores.get('subjectivity', 'N/A'):.2f}</li>"
+          for article, scores in stats.get('sentiments', {}).items()
+      )}
+      </ul>
+    </div>
+
+    <div class="stat-card">
+      <h2>Sentence Stats</h2>
+      <ul>
+      {"".join(
+          f"<li>{article}: Sentences {stats_['sentence_count']}, Avg Length {stats_['avg_sentence_length']:.2f}, Longest {stats_['longest_sentence_length']}</li>"
+          for article, stats_ in stats.get('sentence_stats', {}).items()
+      )}
+      </ul>
+    </div>
+
+    <div class="stat-card">
+      <h2>Keywords per Article</h2>
+      {"".join(
+          f"<div><strong>{article}</strong><ul>" + "".join(f"<li>{kw}</li>" for kw in kws) + "</ul></div>"
+          for article, kws in stats.get('keywords', {}).items()
+      )}
+    </div>
   </div>
-  <div class="section">
-    <h2>Top Words</h2>
-    <ul>
-      {''.join(f"<li>{word}</li>" for word in stats['top_words'])}
-    </ul>
-  </div>
-  <div class="section">
-    <h2>Entity Counts (Top 10)</h2>
-    <ul>
-      {''.join(f"<li>{entity}: {count}</li>" for entity, count in stats['entity_counts'])}
-    </ul>
-  </div>
+
+  <img src="wordcloud.png" alt="Word Cloud" style="max-width:100%; margin-top: 2rem; border-radius: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" />
+
 </body>
 </html>
 """
     with open("stats.html", "w", encoding="utf-8") as f:
         f.write(html)
 
-
 if __name__ == "__main__":
-    stats = analyze_articles()
-    generate_html_report(stats)
+    generate_full_html_report()
+    print("stats.html generated with full details and styling.")
