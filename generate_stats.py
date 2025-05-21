@@ -154,8 +154,8 @@ def analyze_articles():
 def generate_html(stats):
     pos_html = ""
     for pos, words in stats['pos_summary'].items():
-    full_name = POS_FULL_NAMES.get(pos, pos)
-    pos_html += f"<p><strong>{full_name}:</strong> {', '.join(words)}</p>"
+        full_name = POS_FULL_NAMES.get(pos, pos)
+        pos_html += f"<p><strong>{full_name}:</strong> {', '.join(words)}</p>"
 
     # Lexical diversity HTML
     lex_html = "<ul>"
