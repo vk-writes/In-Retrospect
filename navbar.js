@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <a href="articles.html" class="nav-link">Articles</a>
         <a href="about.html" class="nav-link">About</a>
         <a href="contact.html" class="nav-link">Contact</a>
-        
       </nav>
       <button id="darkModeToggle" class="dark-toggle" aria-label="Toggle dark mode">🌓 Dark Mode</button>
     </div>
@@ -70,7 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   darkToggleBtn.addEventListener("click", toggleDarkMode);
 
-  // Auto-hide hamburger and sidebar on wider screens (>768px)
+  // Show hamburger only on small screens
   function checkScreenSize() {
     if (window.innerWidth >= 768) {
       openBtn.style.display = "none";
