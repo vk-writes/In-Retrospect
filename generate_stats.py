@@ -132,12 +132,14 @@ def generate_full_html_report():
 
     html = f"""
 <!DOCTYPE html>
+<link rel="stylesheet" href="style2.css" />
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Stats Report</title>
   <link rel="stylesheet" href="style2.css" />
 </head>
+<button id="darkModeToggle" class="dark-toggle">Toggle Dark Mode</button>
 <body>
   <h1>Stats Report</h1>
 
