@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebar.classList.add("open");
     overlay.style.display = "block";
   }
+
   function closeSidebar() {
     sidebar.setAttribute("aria-hidden", "true");
     sidebar.classList.remove("open");
@@ -38,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
   closeBtn.addEventListener("click", closeSidebar);
   overlay.addEventListener("click", closeSidebar);
 
-  // Highlight active nav link based on current URL
+  // Highlight active nav link
   const currentPath = window.location.pathname.split("/").pop();
   navLinks.forEach(link => {
     if (
@@ -49,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Dark mode toggle function
+  // Theme setup
   function toggleDarkMode() {
     if (document.body.classList.contains("theme-dark")) {
       document.body.classList.replace("theme-dark", "theme-light");
@@ -62,14 +63,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Initialize theme from localStorage or default to light
   const savedTheme = localStorage.getItem("theme") || "light";
   document.body.classList.add(savedTheme === "dark" ? "theme-dark" : "theme-light");
   darkToggleBtn.textContent = savedTheme === "dark" ? "🌞 Light Mode" : "🌓 Dark Mode";
-
   darkToggleBtn.addEventListener("click", toggleDarkMode);
 
-  // Show hamburger only on small screens
+  // Responsive sidebar
   function checkScreenSize() {
     if (window.innerWidth >= 768) {
       openBtn.style.display = "none";
@@ -80,19 +79,21 @@ document.addEventListener("DOMContentLoaded", () => {
       openBtn.style.display = "block";
     }
   }
+
   checkScreenSize();
   window.addEventListener("resize", checkScreenSize);
 
-  // Load footer.html into the end of the body
-fetch('footer.html')
-  .then(res => res.text())
-  .then(data => {
-    const footer = document.createElement('div');
-    footer.innerHTML = data;
-    document.body.appendChild(footer);
-  });
-  
+  // ✅ Load footer.html + insert year
+  fetch("footer.html")
+    .then(res => res.text())
+    .then(data => {
+      const footer = document.createElement("div");
+      footer.innerHTML = data;
+      document.body.appendChild(footer);
+
+      const yearSpan = footer.querySelector("#year");
+      if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+      }
+    });
 });
-
-
-
