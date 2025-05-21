@@ -1,79 +1,25 @@
-
 <!DOCTYPE html>
-<link rel="stylesheet" href="style2.css" />
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Stats Report</title>
+  <meta charset="UTF-8">
+  <title>Fun Stats</title>
   <link rel="stylesheet" href="style2.css" />
+  <script src="navbar.js" defer></script>
 </head>
-<button id="darkModeToggle" class="dark-toggle">Toggle Dark Mode</button>
 <body>
-  <h1>Stats Report</h1>
-
+  <h1>📊 Fun Stats</h1>
   <div class="stats-grid">
-    <div class="stat-card">
-      <h2>General Stats</h2>
-      <p><strong>Last Updated:</strong> 2025-05-21 18:53 UTC</p>
-      <p><strong>Article Count:</strong> 3</p>
-      <p><strong>Total Words:</strong> 774</p>
-      <p><strong>Average Words per Article:</strong> 258</p>
-      <p><strong>Longest Article:</strong> foodloss</p>
-    </div>
-
-    <div class="stat-card">
-      <h2>Top Words</h2>
-      <ul>
-        <li>food</li><li>flw</li><li>study</li><li>loss</li><li>government</li><li>india</li><li>estimates</li><li>estimate</li><li>fruits</li><li>need</li>
-      </ul>
-    </div>
-
-    <div class="stat-card">
-      <h2>Entity Counts (Top 10)</h2>
-      <ul>
-        <li>ORG: 26</li><li>DATE: 9</li><li>GPE: 6</li><li>PERSON: 3</li><li>NORP: 2</li><li>CARDINAL: 1</li><li>ORDINAL: 1</li><li>PERCENT: 1</li>
-      </ul>
-    </div>
+    <div class="stat-card"><h2>📚 Articles</h2><p>Total: 3</p><p>Longest: foodloss</p></div>
+    <div class="stat-card"><h2>📝 Words</h2><p>Total: 774</p><p>Average: 258/article</p></div>
+    <div class="stat-card"><h2>🔠 Top Words</h2><ol><li>food</li><li>flw</li><li>study</li><li>loss</li><li>government</li><li>india</li><li>estimates</li><li>estimate</li><li>fruits</li><li>need</li></ol></div>
+    <div class="stat-card"><h2>🏷️ Parts of Speech</h2><p><strong>Adjectives:</strong> cold, economic, high, post, harvest</p><p><strong>Adverbs:</strong> ago, especially, long, far, extensively</p><p><strong>Auxiliary Verbs:</strong> having</p><p><strong>Nouns:</strong> food, study, loss, government, estimates</p><p><strong>Proper Nouns:</strong> flw, india, kumar, institute, epw</p><p><strong>Subordinating Conjunctions:</strong> despite</p><p><strong>Verbs:</strong> increasing, happening, conducted, published, reduce</p><p><strong>Other:</strong> etc</p></div>
+    <div class="stat-card"><h2>🧠 Lexical Diversity</h2><ul><li>articles.html: 1.000</li><li>footer.html: 1.000</li><li>foodloss.html: 0.510</li></ul></div>
+    <div class="stat-card"><h2>✍️ Sentence Stats</h2><p><strong>articles.html:</strong> Avg: 7.0, Longest: 7, Count: 1</p><p><strong>footer.html:</strong> Avg: 5.0, Longest: 8, Count: 3</p><p><strong>foodloss.html:</strong> Avg: 29.7, Longest: 54, Count: 31</p></div>
+    <div class="stat-card"><h2>📖 Readability</h2><p><strong>articles.html:</strong> Flesch: -106.4, Grade: 28.8</p><p><strong>footer.html:</strong> Flesch: 29.5, Grade: 11.1</p><p><strong>foodloss.html:</strong> Flesch: 37.2, Grade: 14.0</p></div>
+    <div class="stat-card"><h2>🙂 Sentiment</h2><p><strong>articles.html:</strong> Polarity: 0.00, Subjectivity: 0.00</p><p><strong>footer.html:</strong> Polarity: 0.00, Subjectivity: 0.00</p><p><strong>foodloss.html:</strong> Polarity: 0.04, Subjectivity: 0.48</p></div>
+    <div class="stat-card"><h2>🏷️ Named Entities</h2><ul><li>DATE: 11.000</li><li>GPE: 7.000</li><li>ORG: 6.000</li><li>PERSON: 3.000</li><li>NORP: 3.000</li><li>CARDINAL: 1.000</li><li>ORDINAL: 1.000</li><li>PERCENT: 1.000</li></ul></div>
+    <div class="stat-card"><h2>🔑 Keywords</h2><p><strong>articles.html:</strong> https, github, writes, html, foodloss, vk, retrospect, io, loss, food</p><p><strong>footer.html:</strong> unless, copy, specified, rights, reserved, otherwise, all, kumar</p><p><strong>foodloss.html:</strong> flw, food, also, not, we, study, there, have, government, while</p></div>
+    <div class="stat-card"><h2>🌈 Word Cloud</h2><img src="wordcloud.png" style="width:100%;"/></div>
   </div>
-
-  <div class="stats-grid">
-    <div class="stat-card">
-      <h2>Lexical Diversities</h2>
-      <ul>
-        <li>articles.html: 1.00</li><li>footer.html: 1.00</li><li>foodloss.html: 0.51</li>
-      </ul>
-    </div>
-
-    <div class="stat-card">
-      <h2>Sentence Stats</h2>
-      <ul>
-        <li>articles.html: Avg Len: 7.0, Longest: 7, Count: 1</li><li>footer.html: Avg Len: 5.0, Longest: 8, Count: 3</li><li>foodloss.html: Avg Len: 29.7, Longest: 54, Count: 31</li>
-      </ul>
-    </div>
-
-    <div class="stat-card">
-      <h2>Readability Scores</h2>
-      <ul>
-        <li>articles.html: Flesch Ease: -106.4, Flesch-Kincaid Grade: 28.8</li><li>footer.html: Flesch Ease: 29.5, Flesch-Kincaid Grade: 11.1</li><li>foodloss.html: Flesch Ease: 37.2, Flesch-Kincaid Grade: 14.0</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="stats-grid">
-    <div class="stat-card" style="grid-column: span 2;">
-      <h2>Sentiments</h2>
-      <ul>
-        <li>articles.html: Polarity: 0.00, Subjectivity: 0.00</li><li>footer.html: Polarity: 0.00, Subjectivity: 0.00</li><li>foodloss.html: Polarity: 0.04, Subjectivity: 0.48</li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="stat-section">
-    <h2>Keywords Extracted</h2>
-    <h3>articles.html</h3><ul><li>food loss</li><li>food</li><li>loss</li></ul><h3>footer.html</h3><ul><li>Kumar</li><li>All rights</li><li>otherwise specified</li><li>All</li><li>specified</li><li>All rights reserved</li><li>unless otherwise specified</li><li>rights</li><li>reserved</li><li>unless</li></ul><h3>foodloss.html</h3><ul><li>Loss Vasanth Kumar</li><li>having overtaken China</li><li>Food Loss Vasanth</li><li>Vasanth Kumar</li><li>populous country two</li><li>country two years</li><li>Food Paradox</li><li>India having overtaken</li><li>Food Loss</li><li>overtaken China</li></ul>
-  </div>
-
-  <img src="wordcloud.png" alt="Word Cloud" style="max-width:100%; border-radius: 1rem; margin-top: 2rem;" />
 </body>
 </html>
-    
