@@ -1,57 +1,38 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Fun Stats</title>
-    <link rel="stylesheet" href="style2.css" />
-    <script src="navbar.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <h1>📊 Fun Stats</h1>
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h2>📚 Articles</h2>
-            <p>Total: 3</p>
-            <p>Longest: foodloss</p>
-        </div>
-        <div class="stat-card">
-            <h2>📝 Words</h2>
-            <p>Total: 943</p>
-            <p>Average: 314/article</p>
-        </div>
-        <div class="stat-card">
-            <h2>🔠 Top Words</h2>
-            <ol><li>food</li><li>flw</li><li>study</li><li>loss</li><li>government</li><li>india</li><li>estimates</li><li>estimate</li><li>fruits</li><li>need</li></ol>
-        </div>
-        <div class="stat-card">
-            <h2>🏷️ Parts of Speech</h2>
-            <p><strong>Adj:</strong> cold, economic, high, post, harvest</p><p><strong>Adv:</strong> ago, especially, long, far, extensively</p><p><strong>Aux:</strong> having</p><p><strong>Noun:</strong> food, study, loss, government, estimates</p><p><strong>Propn:</strong> flw, india, kumar, institute, epw</p><p><strong>Sconj:</strong> despite</p><p><strong>Verb:</strong> increasing, happening, conducted, published, reduce</p><p><strong>X:</strong> etc</p>
-        </div>
-        <div class="stat-card">
-            <h2>⏰ Last Updated</h2>
-            <p>2025-05-21 17:20 UTC</p>
-        </div>
-    </div>
-    <canvas id="chart" width="400" height="200"></canvas>
-    <script>
-        const chart = new Chart(document.getElementById('chart'), {
-            type: 'bar',
-            data: {
-                labels: ["food", "flw", "study", "loss", "government", "india", "estimates", "estimate", "fruits", "need"],
-                datasets: [{
-                    label: 'Top Words',
-                    data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)'
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    title: { display: true, text: 'Top Words Chart' }
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <title>Stats Report</title>
+      <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 2rem; background: #fdfaf6; color: #1a1a1a; }
+        h1 { color: #0a9396; border-bottom: 2px solid #94d2bd; padding-bottom: 0.4rem; }
+        .section { margin-bottom: 2rem; }
+        ul { list-style: none; padding: 0; }
+        li { margin-bottom: 0.3rem; }
+      </style>
+    </head>
+    <body>
+      <h1>Stats Report</h1>
+      <div class="section">
+        <strong>Last Updated:</strong> 2025-05-21 18:26 UTC<br/>
+        <strong>Article Count:</strong> 3<br/>
+        <strong>Total Words:</strong> 943<br/>
+        <strong>Average Words per Article:</strong> 314<br/>
+        <strong>Longest Article:</strong> foodloss<br/>
+      </div>
+      <div class="section">
+        <h2>Top Words</h2>
+        <ul>
+          <li>food</li><li>flw</li><li>study</li><li>loss</li><li>government</li><li>india</li><li>estimates</li><li>estimate</li><li>fruits</li><li>need</li>
+        </ul>
+      </div>
+      <div class="section">
+        <h2>Entity Counts (Top 10)</h2>
+        <ul>
+          <li>ORG: 26</li><li>DATE: 9</li><li>GPE: 6</li><li>PERSON: 3</li><li>NORP: 2</li><li>CARDINAL: 1</li><li>ORDINAL: 1</li><li>PERCENT: 1</li>
+        </ul>
+      </div>
+    </body>
+    </html>
+    
