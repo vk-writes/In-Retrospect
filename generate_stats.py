@@ -14,8 +14,8 @@ nlp = spacy.load("en_core_web_sm")
 
 # Configuration
 EXCLUDED_FILES = {
-    'index.html', 'stats.html', 'about.html', 'contact.html', 'footer.html', 'articles.html'
-    'style.css', 'style2.css', 'navbar.js', '404.html'
+    'index.html', 'stats.html', 'about.html', 'contact.html', 'footer.html', 
+    'articles.html', 'style.css', 'style2.css', 'navbar.js', '404.html'
 }
 STOPWORDS = {
     'the', 'and', 'of', 'to', 'a', 'in', 'that', 'it', 'is', 'was',
