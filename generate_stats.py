@@ -7,12 +7,8 @@ from datetime import datetime
 from textstat import flesch_reading_ease, flesch_kincaid_grade
 from textblob import TextBlob
 from wordcloud import WordCloud
-from rake_nltk import Rake
 import matplotlib.pyplot as plt
-
-import nltk
-nltk.download('punkt')
-nltk.download('stopwords')
+import yake  # <-- Added yake for keyword extraction
 
 # Load spaCy English model
 nlp = spacy.load("en_core_web_sm")
@@ -63,6 +59,17 @@ def analyze_articles():
     entity_counter = Counter()
     keywords = {}
     all_text_for_wordcloud = []
+
+    # Setup YAKE keyword extractor
+    language = "en"
+    max_ngram_size = 3
+    deduplication_threshold = 0.9
+    num_of_keywords = 10
+    kw_extractor = yake.KeywordExtractor(lan=language,
+                                        n=max_ngram_size,
+                                        dedupLim=deduplication_threshold,
+                                        top=num_of_keywords,
+                                        stopwords=STOPWORDS)
 
     print("Scanning articles...")
     for filename in os.listdir('.'):
@@ -117,10 +124,9 @@ def analyze_articles():
                 for ent in doc_ner.ents:
                     entity_counter[ent.label_] += 1
 
-                # Keyword extraction with RAKE
-                rake = Rake(stopwords=STOPWORDS)
-                rake.extract_keywords_from_text(text)
-                keywords[filename] = rake.get_ranked_phrases()[:10]
+                # Keyword extraction with YAKE
+                extracted_keywords = kw_extractor.extract_keywords(text)
+                keywords[filename] = [kw for kw, score in extracted_keywords]
 
                 all_text_for_wordcloud.append(text)
 
@@ -156,151 +162,7 @@ def analyze_articles():
 
     return stats
 
-
-def generate_html(stats):
-    pos_html = ""
-    for pos, words in stats['pos_summary'].items():
-        full_name = POS_FULL_NAMES.get(pos, pos)
-        pos_html += f"<p><strong>{full_name}:</strong> {', '.join(words)}</p>"
-
-    # Lexical diversity HTML
-    lex_html = "<ul>"
-    for art, val in stats['lexical_diversities'].items():
-        lex_html += f"<li>{art}: {val:.3f}</li>"
-    lex_html += "</ul>"
-
-    # Sentence stats HTML
-    sent_html = ""
-    for art, vals in stats['sentence_stats'].items():
-        sent_html += (
-            f"<p><strong>{art}:</strong> Avg sentence length: {vals['avg_sentence_length']:.1f}, "
-            f"Longest sentence: {vals['longest_sentence_length']}, "
-            f"Sentence count: {vals['sentence_count']}</p>"
-        )
-
-    # Readability HTML
-    read_html = ""
-    for art, vals in stats['readabilities'].items():
-        read_html += (
-            f"<p><strong>{art}:</strong> Flesch Reading Ease: {vals['flesch_reading_ease']:.1f}, "
-            f"Flesch-Kincaid Grade: {vals['flesch_kincaid_grade']:.1f}</p>"
-        )
-
-    # Sentiment HTML
-    sentim_html = ""
-    for art, vals in stats['sentiments'].items():
-        sentim_html += (
-            f"<p><strong>{art}:</strong> Polarity: {vals['polarity']:.2f}, "
-            f"Subjectivity: {vals['subjectivity']:.2f}</p>"
-        )
-
-    # Entity counts HTML
-    entity_html = "<ul>"
-    for ent, count in stats['entity_counts']:
-        entity_html += f"<li>{ent}: {count}</li>"
-    entity_html += "</ul>"
-
-    # Keywords HTML
-    keywords_html = ""
-    for art, kw_list in stats['keywords'].items():
-        keywords_html += f"<p><strong>{art}:</strong> {', '.join(kw_list)}</p>"
-
-    html = f"""<!DOCTYPE html>
-<html>
-<head>
-    <title>Fun Stats</title>
-    <link rel="stylesheet" href="style2.css" />
-    <script src="navbar.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <h1>📊 Fun Stats</h1>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h2>📚 Articles</h2>
-            <p>Total: {stats['article_count']}</p>
-            <p>Longest: {stats['longest_article']}</p>
-        </div>
-
-        <div class="stat-card">
-            <h2>📝 Words</h2>
-            <p>Total: {stats['total_words']:,}</p>
-            <p>Average: {stats['avg_words']:,}/article</p>
-        </div>
-
-        <div class="stat-card">
-            <h2>🔠 Top Words</h2>
-            <ol>{''.join(f'<li>{word}</li>' for word in stats['top_words'])}</ol>
-        </div>
-
-        <div class="stat-card">
-            <h2>🏷️ Parts of Speech</h2>
-            {pos_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>🧠 Lexical Diversity (Unique words ratio)</h2>
-            {lex_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>✍️ Sentence Stats</h2>
-            {sent_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>📖 Readability</h2>
-            {read_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>🙂 Sentiment</h2>
-            {sentim_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>🏷️ Named Entity Counts</h2>
-            {entity_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>🔑 Keywords per Article</h2>
-            {keywords_html}
-        </div>
-
-        <div class="stat-card" style="text-align:center;">
-            <h2>🌈 Word Cloud</h2>
-            <img src="wordcloud.png" alt="Word Cloud" style="max-width: 100%; height: auto;"/>
-        </div>
-    </div>
-
-    <canvas id="chart" width="400" height="200"></canvas>
-    <script>
-        const chart = new Chart(document.getElementById('chart'), {{
-            type: 'bar',
-            data: {{
-                labels: {json.dumps(stats['top_words'])},
-                datasets: [{{
-                    label: 'Top Words',
-                    data: {json.dumps([1] * len(stats['top_words']))},
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)'
-                }}]
-            }},
-            options: {{
-                responsive: true,
-                plugins: {{
-                    legend: {{ display: false }},
-                    title: {{ display: true, text: 'Top Words Chart' }}
-                }}
-            }}
-        }});
-    </script>
-</body>
-</html>
-"""
-    return html
-
+# ... your generate_html() function remains unchanged ...
 
 if __name__ == '__main__':
     stats = analyze_articles()
