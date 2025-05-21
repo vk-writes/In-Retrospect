@@ -23,25 +23,12 @@ STOPWORDS = {
 }
 
 POS_FULL_NAMES = {
-    "ADJ": "Adjectives",
-    "ADP": "Adpositions (Prepositions and Postpositions)",
-    "ADV": "Adverbs",
-    "AUX": "Auxiliary Verbs",
-    "CONJ": "Coordinating Conjunctions",
-    "CCONJ": "Coordinating Conjunctions",
-    "DET": "Determiners",
-    "INTJ": "Interjections",
-    "NOUN": "Nouns",
-    "NUM": "Numerals",
-    "PART": "Particles",
-    "PRON": "Pronouns",
-    "PROPN": "Proper Nouns",
-    "PUNCT": "Punctuation",
-    "SCONJ": "Subordinating Conjunctions",
-    "SYM": "Symbols",
-    "VERB": "Verbs",
-    "X": "Other",
-    "SPACE": "Spaces",
+    "ADJ": "Adjectives", "ADP": "Adpositions", "ADV": "Adverbs",
+    "AUX": "Auxiliary Verbs", "CCONJ": "Coordinating Conjunctions", "DET": "Determiners",
+    "INTJ": "Interjections", "NOUN": "Nouns", "NUM": "Numerals", "PART": "Particles",
+    "PRON": "Pronouns", "PROPN": "Proper Nouns", "PUNCT": "Punctuation",
+    "SCONJ": "Subordinating Conjunctions", "SYM": "Symbols", "VERB": "Verbs",
+    "X": "Other", "SPACE": "Spaces"
 }
 
 
@@ -55,9 +42,8 @@ def analyze_articles():
     readabilities = {}
     sentiments = {}
     entity_counter = Counter()
-    keywords = {}
     all_text_for_wordcloud = []
-    article_texts = {}
+    article_text_map = {}
 
     print("Scanning articles...")
     for filename in os.listdir('.'):
@@ -71,7 +57,6 @@ def analyze_articles():
 
                 articles.append(filename)
                 total_words += len([t for t in doc if t.is_alpha])
-                article_texts[filename] = text  # Save original case version for TF-IDF
 
                 for token in doc:
                     if token.is_alpha and not token.is_stop:
@@ -83,19 +68,15 @@ def analyze_articles():
 
                 doc_full = nlp(text)
                 lengths = [len(sent) for sent in doc_full.sents]
-                avg_sentence_length = sum(lengths) / len(lengths) if lengths else 0
-                longest_sentence_length = max(lengths) if lengths else 0
                 sentence_stats[filename] = {
-                    'avg_sentence_length': avg_sentence_length,
-                    'longest_sentence_length': longest_sentence_length,
+                    'avg_sentence_length': sum(lengths) / len(lengths) if lengths else 0,
+                    'longest_sentence_length': max(lengths) if lengths else 0,
                     'sentence_count': len(lengths)
                 }
 
-                flesch_score = flesch_reading_ease(text)
-                fk_grade = flesch_kincaid_grade(text)
                 readabilities[filename] = {
-                    'flesch_reading_ease': flesch_score,
-                    'flesch_kincaid_grade': fk_grade
+                    'flesch_reading_ease': flesch_reading_ease(text),
+                    'flesch_kincaid_grade': flesch_kincaid_grade(text)
                 }
 
                 blob = TextBlob(text)
@@ -104,33 +85,29 @@ def analyze_articles():
                     'subjectivity': blob.sentiment.subjectivity
                 }
 
-                doc_ner = nlp(text)
-                for ent in doc_ner.ents:
+                for ent in doc.ents:
                     entity_counter[ent.label_] += 1
 
+                article_text_map[filename] = text
                 all_text_for_wordcloud.append(text)
 
-    # Keyword Extraction with TF-IDF
-    tfidf_vectorizer = TfidfVectorizer(
-        stop_words=STOPWORDS,
-        max_features=1000,
-        ngram_range=(1, 3),
-        sublinear_tf=True
-    )
-    texts_list = list(article_texts.values())
+    # TF-IDF keyword extraction
+    tfidf_vectorizer = TfidfVectorizer(stop_words=list(STOPWORDS), max_features=1000)
+    filenames = list(article_text_map.keys())
+    texts_list = list(article_text_map.values())
     tfidf_matrix = tfidf_vectorizer.fit_transform(texts_list)
-    tfidf_feature_names = tfidf_vectorizer.get_feature_names_out()
+    feature_names = tfidf_vectorizer.get_feature_names_out()
+    keywords = {}
 
-    for idx, filename in enumerate(article_texts):
-        row = tfidf_matrix[idx].toarray()[0]
-        tfidf_scores = list(zip(tfidf_feature_names, row))
-        sorted_keywords = sorted(tfidf_scores, key=lambda x: x[1], reverse=True)
-        keywords[filename] = [kw for kw, score in sorted_keywords[:10]]
+    for i, filename in enumerate(filenames):
+        row = tfidf_matrix[i].toarray()[0]
+        top_indices = row.argsort()[::-1][:10]
+        top_words = [feature_names[i] for i in top_indices if row[i] > 0]
+        keywords[filename] = top_words
 
     article_lengths = {name: os.path.getsize(name) for name in articles}
     longest_article = max(article_lengths, key=article_lengths.get) if articles else "None"
 
-    # Word cloud
     combined_text = " ".join(all_text_for_wordcloud)
     wc = WordCloud(width=800, height=400, background_color='white', stopwords=STOPWORDS).generate(combined_text)
     wc.to_file("wordcloud.png")
@@ -141,7 +118,7 @@ def analyze_articles():
         'avg_words': total_words // len(articles) if articles else 0,
         'top_words': [w for w, _ in word_counter.most_common(10)],
         'longest_article': longest_article.replace('.html', ''),
-        'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M UTC'),
+        'last_updated': datetime.utcnow().strftime('%Y-%m-%d %H:%M UTC'),
         'pos_summary': {
             pos: [w for w, _ in words.most_common(5)]
             for pos, words in sorted(pos_counters.items())
@@ -161,142 +138,48 @@ def analyze_articles():
 
 
 def generate_html(stats):
-    pos_html = ""
-    for pos, words in stats['pos_summary'].items():
-        full_name = POS_FULL_NAMES.get(pos, pos)
-        pos_html += f"<p><strong>{full_name}:</strong> {', '.join(words)}</p>"
+    def ul(items): return "<ul>" + "".join(f"<li>{k}: {v:.3f}</li>" for k, v in items.items()) + "</ul>"
 
-    lex_html = "<ul>"
-    for art, val in stats['lexical_diversities'].items():
-        lex_html += f"<li>{art}: {val:.3f}</li>"
-    lex_html += "</ul>"
-
-    sent_html = ""
-    for art, vals in stats['sentence_stats'].items():
-        sent_html += (
-            f"<p><strong>{art}:</strong> Avg sentence length: {vals['avg_sentence_length']:.1f}, "
-            f"Longest sentence: {vals['longest_sentence_length']}, "
-            f"Sentence count: {vals['sentence_count']}</p>"
-        )
-
-    read_html = ""
-    for art, vals in stats['readabilities'].items():
-        read_html += (
-            f"<p><strong>{art}:</strong> Flesch Reading Ease: {vals['flesch_reading_ease']:.1f}, "
-            f"Flesch-Kincaid Grade: {vals['flesch_kincaid_grade']:.1f}</p>"
-        )
-
-    sentim_html = ""
-    for art, vals in stats['sentiments'].items():
-        sentim_html += (
-            f"<p><strong>{art}:</strong> Polarity: {vals['polarity']:.2f}, "
-            f"Subjectivity: {vals['subjectivity']:.2f}</p>"
-        )
-
-    entity_html = "<ul>"
-    for ent, count in stats['entity_counts']:
-        entity_html += f"<li>{ent}: {count}</li>"
-    entity_html += "</ul>"
-
-    keywords_html = ""
-    for art, kw_list in stats['keywords'].items():
-        keywords_html += f"<p><strong>{art}:</strong> {', '.join(kw_list)}</p>"
+    pos_html = "".join(f"<p><strong>{POS_FULL_NAMES.get(pos, pos)}:</strong> {', '.join(words)}</p>"
+                       for pos, words in stats['pos_summary'].items())
+    lex_html = ul(stats['lexical_diversities'])
+    sent_html = "".join(
+        f"<p><strong>{k}:</strong> Avg: {v['avg_sentence_length']:.1f}, Longest: {v['longest_sentence_length']}, Count: {v['sentence_count']}</p>"
+        for k, v in stats['sentence_stats'].items())
+    read_html = "".join(
+        f"<p><strong>{k}:</strong> Flesch: {v['flesch_reading_ease']:.1f}, Grade: {v['flesch_kincaid_grade']:.1f}</p>"
+        for k, v in stats['readabilities'].items())
+    sentim_html = "".join(
+        f"<p><strong>{k}:</strong> Polarity: {v['polarity']:.2f}, Subjectivity: {v['subjectivity']:.2f}</p>"
+        for k, v in stats['sentiments'].items())
+    entity_html = ul(dict(stats['entity_counts']))
+    keywords_html = "".join(f"<p><strong>{k}:</strong> {', '.join(v)}</p>" for k, v in stats['keywords'].items())
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>Fun Stats</title>
-    <link rel="stylesheet" href="style2.css" />
-    <script src="navbar.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <title>Fun Stats</title>
+  <link rel="stylesheet" href="style2.css" />
+  <script src="navbar.js" defer></script>
 </head>
 <body>
-    <h1>📊 Fun Stats</h1>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <h2>📚 Articles</h2>
-            <p>Total: {stats['article_count']}</p>
-            <p>Longest: {stats['longest_article']}</p>
-        </div>
-
-        <div class="stat-card">
-            <h2>📝 Words</h2>
-            <p>Total: {stats['total_words']:,}</p>
-            <p>Average: {stats['avg_words']:,}/article</p>
-        </div>
-
-        <div class="stat-card">
-            <h2>🔠 Top Words</h2>
-            <ol>{''.join(f'<li>{word}</li>' for word in stats['top_words'])}</ol>
-        </div>
-
-        <div class="stat-card">
-            <h2>🏷️ Parts of Speech</h2>
-            {pos_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>🧠 Lexical Diversity (Unique words ratio)</h2>
-            {lex_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>✍️ Sentence Stats</h2>
-            {sent_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>📖 Readability</h2>
-            {read_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>🙂 Sentiment</h2>
-            {sentim_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>🏷️ Named Entity Counts</h2>
-            {entity_html}
-        </div>
-
-        <div class="stat-card">
-            <h2>🔑 Keywords per Article</h2>
-            {keywords_html}
-        </div>
-
-        <div class="stat-card" style="text-align:center;">
-            <h2>🌈 Word Cloud</h2>
-            <img src="wordcloud.png" alt="Word Cloud" style="max-width: 100%; height: auto;"/>
-        </div>
-    </div>
-
-    <canvas id="chart" width="400" height="200"></canvas>
-    <script>
-        const chart = new Chart(document.getElementById('chart'), {{
-            type: 'bar',
-            data: {{
-                labels: {json.dumps(stats['top_words'])},
-                datasets: [{{
-                    label: 'Top Words',
-                    data: {json.dumps([1] * len(stats['top_words']))},
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)'
-                }}]
-            }},
-            options: {{
-                responsive: true,
-                plugins: {{
-                    legend: {{ display: false }},
-                    title: {{ display: true, text: 'Top Words Chart' }}
-                }}
-            }}
-        }});
-    </script>
+  <h1>📊 Fun Stats</h1>
+  <div class="stats-grid">
+    <div class="stat-card"><h2>📚 Articles</h2><p>Total: {stats['article_count']}</p><p>Longest: {stats['longest_article']}</p></div>
+    <div class="stat-card"><h2>📝 Words</h2><p>Total: {stats['total_words']}</p><p>Average: {stats['avg_words']}/article</p></div>
+    <div class="stat-card"><h2>🔠 Top Words</h2><ol>{"".join(f"<li>{w}</li>" for w in stats['top_words'])}</ol></div>
+    <div class="stat-card"><h2>🏷️ Parts of Speech</h2>{pos_html}</div>
+    <div class="stat-card"><h2>🧠 Lexical Diversity</h2>{lex_html}</div>
+    <div class="stat-card"><h2>✍️ Sentence Stats</h2>{sent_html}</div>
+    <div class="stat-card"><h2>📖 Readability</h2>{read_html}</div>
+    <div class="stat-card"><h2>🙂 Sentiment</h2>{sentim_html}</div>
+    <div class="stat-card"><h2>🏷️ Named Entities</h2>{entity_html}</div>
+    <div class="stat-card"><h2>🔑 Keywords</h2>{keywords_html}</div>
+    <div class="stat-card"><h2>🌈 Word Cloud</h2><img src="wordcloud.png" style="width:100%;"/></div>
+  </div>
 </body>
-</html>
-"""
+</html>"""
     return html
 
 
@@ -304,4 +187,4 @@ if __name__ == '__main__':
     stats = analyze_articles()
     with open('stats.html', 'w', encoding='utf-8') as f:
         f.write(generate_html(stats))
-    print("✅ Full supercharged stats.html and wordcloud.png generated successfully!")
+    print("✅ stats.html and wordcloud.png generated successfully!")
