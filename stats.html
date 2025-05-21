@@ -2,40 +2,56 @@
 <html>
 <head>
     <title>Fun Stats</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style2.css" />
     <script src="navbar.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <h1>📊 Fun Stats</h1>
     <div class="stats-grid">
-        <!-- Article Stats -->
         <div class="stat-card">
             <h2>📚 Articles</h2>
             <p>Total: 3</p>
             <p>Longest: foodloss</p>
         </div>
-        
-        <!-- Word Stats -->
         <div class="stat-card">
             <h2>📝 Words</h2>
-            <p>Total: 796</p>
-            <p>Average: 265/article</p>
+            <p>Total: 943</p>
+            <p>Average: 314/article</p>
         </div>
-        
-        <!-- Top Words -->
         <div class="stat-card">
             <h2>🔠 Top Words</h2>
-            <ol>
-                <li>Food</li><li>Also</li><li>Study</li><li>Loss</li><li>Have</li><li>There</li><li>Government</li><li>India</li><li>While</li><li>Estimates</li>
-            </ol>
+            <ol><li>food</li><li>flw</li><li>study</li><li>loss</li><li>government</li><li>india</li><li>estimates</li><li>estimate</li><li>fruits</li><li>need</li></ol>
         </div>
-        
-        <!-- Meta -->
+        <div class="stat-card">
+            <h2>🏷️ Parts of Speech</h2>
+            <p><strong>Adj:</strong> cold, economic, high, post, harvest</p><p><strong>Adv:</strong> ago, especially, long, far, extensively</p><p><strong>Aux:</strong> having</p><p><strong>Noun:</strong> food, study, loss, government, estimates</p><p><strong>Propn:</strong> flw, india, kumar, institute, epw</p><p><strong>Sconj:</strong> despite</p><p><strong>Verb:</strong> increasing, happening, conducted, published, reduce</p><p><strong>X:</strong> etc</p>
+        </div>
         <div class="stat-card">
             <h2>⏰ Last Updated</h2>
-            <p>2025-05-21 16:56 UTC</p>
-            <p><small>(Updates daily)</small></p>
+            <p>2025-05-21 17:20 UTC</p>
         </div>
     </div>
+    <canvas id="chart" width="400" height="200"></canvas>
+    <script>
+        const chart = new Chart(document.getElementById('chart'), {
+            type: 'bar',
+            data: {
+                labels: ["food", "flw", "study", "loss", "government", "india", "estimates", "estimate", "fruits", "need"],
+                datasets: [{
+                    label: 'Top Words',
+                    data: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Top Words Chart' }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
