@@ -138,27 +138,35 @@ def analyze_articles():
 
 
 def generate_html(stats):
-    def ul(items): return "<ul>" + "".join(f"<li>{k}: {v:.3f}</li>" for k, v in items.items()) + "</ul>"
+    def ul(items): 
+        return "<ul>" + "".join(f"<li>{k}: {v:.3f}</li>" for k, v in items.items()) + "</ul>"
 
-    pos_html = "".join(f"<p><strong>{POS_FULL_NAMES.get(pos, pos)}:</strong> {', '.join(words)}</p>"
-                       for pos, words in stats['pos_summary'].items())
+    pos_html = "".join(
+        f"<p><strong>{POS_FULL_NAMES.get(pos, pos)}:</strong> {', '.join(words)}</p>"
+        for pos, words in stats['pos_summary'].items()
+    )
     lex_html = ul(stats['lexical_diversities'])
     sent_html = "".join(
         f"<p><strong>{k}:</strong> Avg: {v['avg_sentence_length']:.1f}, Longest: {v['longest_sentence_length']}, Count: {v['sentence_count']}</p>"
-        for k, v in stats['sentence_stats'].items())
+        for k, v in stats['sentence_stats'].items()
+    )
     read_html = "".join(
         f"<p><strong>{k}:</strong> Flesch: {v['flesch_reading_ease']:.1f}, Grade: {v['flesch_kincaid_grade']:.1f}</p>"
-        for k, v in stats['readabilities'].items())
+        for k, v in stats['readabilities'].items()
+    )
     sentim_html = "".join(
         f"<p><strong>{k}:</strong> Polarity: {v['polarity']:.2f}, Subjectivity: {v['subjectivity']:.2f}</p>"
-        for k, v in stats['sentiments'].items())
+        for k, v in stats['sentiments'].items()
+    )
     entity_html = ul(dict(stats['entity_counts']))
-    keywords_html = "".join(f"<p><strong>{k}:</strong> {', '.join(v)}</p>" for k, v in stats['keywords'].items())
+    keywords_html = "".join(
+        f"<p><strong>{k}:</strong> {', '.join(v)}</p>" for k, v in stats['keywords'].items()
+    )
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Fun Stats</title>
   <link rel="stylesheet" href="style2.css" />
   <script src="navbar.js" defer></script>
@@ -166,21 +174,22 @@ def generate_html(stats):
 <body>
   <h1>📊 Fun Stats</h1>
   <div class="stats-grid">
-    <div class="stat-card"><h2>📚 Articles</h2><p>Total: {stats['article_count']}</p><p>Longest: {stats['longest_article']}</p></div>
-    <div class="stat-card"><h2>📝 Words</h2><p>Total: {stats['total_words']}</p><p>Average: {stats['avg_words']}/article</p></div>
-    <div class="stat-card"><h2>🔠 Top Words</h2><ol>{"".join(f"<li>{w}</li>" for w in stats['top_words'])}</ol></div>
-    <div class="stat-card"><h2>🏷️ Parts of Speech</h2>{pos_html}</div>
-    <div class="stat-card"><h2>🧠 Lexical Diversity</h2>{lex_html}</div>
-    <div class="stat-card"><h2>✍️ Sentence Stats</h2>{sent_html}</div>
-    <div class="stat-card"><h2>📖 Readability</h2>{read_html}</div>
-    <div class="stat-card"><h2>🙂 Sentiment</h2>{sentim_html}</div>
-    <div class="stat-card"><h2>🏷️ Named Entities</h2>{entity_html}</div>
-    <div class="stat-card"><h2>🔑 Keywords</h2>{keywords_html}</div>
-    <div class="stat-card"><h2>🌈 Word Cloud</h2><img src="wordcloud.png" style="width:100%;"/></div>
+    <section class="stats-section stat-card"><h2>📚 Articles</h2><p>Total: {stats['article_count']}</p><p>Longest: {stats['longest_article']}</p></section>
+    <section class="stats-section stat-card"><h2>📝 Words</h2><p>Total: {stats['total_words']}</p><p>Average: {stats['avg_words']}/article</p></section>
+    <section class="stats-section stat-card"><h2>🔠 Top Words</h2><ol>{"".join(f"<li>{w}</li>" for w in stats['top_words'])}</ol></section>
+    <section class="stats-section stat-card"><h2>🏷️ Parts of Speech</h2>{pos_html}</section>
+    <section class="stats-section stat-card"><h2>🧠 Lexical Diversity</h2>{lex_html}</section>
+    <section class="stats-section stat-card"><h2>✍️ Sentence Stats</h2>{sent_html}</section>
+    <section class="stats-section stat-card"><h2>📖 Readability</h2>{read_html}</section>
+    <section class="stats-section stat-card"><h2>🙂 Sentiment</h2>{sentim_html}</section>
+    <section class="stats-section stat-card"><h2>🏷️ Named Entities</h2>{entity_html}</section>
+    <section class="stats-section stat-card"><h2>🔑 Keywords</h2>{keywords_html}</section>
+    <section class="stats-section stat-card"><h2>🌈 Word Cloud</h2><img src="wordcloud.png" alt="Word Cloud" /></section>
   </div>
 </body>
 </html>"""
     return html
+
 
 
 if __name__ == '__main__':
