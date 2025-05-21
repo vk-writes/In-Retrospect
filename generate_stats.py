@@ -133,6 +133,7 @@ def generate_full_html_report():
     html = f"""
 <!DOCTYPE html>
 <link rel="stylesheet" href="style2.css" />
+<script src="navbar.js" defer></script>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
