@@ -74,7 +74,7 @@ nav .theme-toggle-button {
   border: none;
 }
 
-/* Headings (universal font logic handled per theme) */
+/* Headings */
 h1 {
   font-family: 'Alegreya SC', serif;
   font-size: 2.2rem;
@@ -111,6 +111,7 @@ h3 { font-size: 1.5rem; }
 }
 .theme-light p {
   color: #2b2b2b;
+  text-align: justify;
 }
 .theme-light em {
   color: #ca6702;
@@ -175,6 +176,7 @@ h3 { font-size: 1.5rem; }
 }
 .theme-dark p {
   color: #eceff4;
+  text-align: justify;
 }
 .theme-dark em {
   color: #ebcb8b;
@@ -229,7 +231,7 @@ h3 { font-size: 1.5rem; }
 .sidebar {
   position: fixed;
   top: 0;
-  left: -250px; /* hidden by default */
+  left: -250px;
   width: 250px;
   height: 100%;
   background-color: var(--sidebar-bg, #fff);
@@ -355,8 +357,9 @@ h3 { font-size: 1.5rem; }
 }
 .dark-toggle:hover {
   background-color: #5e81ac;
+}
 
-  /* Dark mode toggle button fixed top-right */
+/* Dark mode toggle button fixed top-right */
 .dark-toggle {
   position: fixed;
   top: 1rem;
@@ -381,6 +384,4 @@ h3 { font-size: 1.5rem; }
 /* Hide dark-toggle inside sidebar if present */
 .sidebar .dark-toggle {
   display: none;
-}
-
 }
