@@ -10,8 +10,14 @@ from wordcloud import WordCloud
 from rake_nltk import Rake
 import matplotlib.pyplot as plt
 
+import nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+
 # Load spaCy English model
 nlp = spacy.load("en_core_web_sm")
+
+# ... rest of your code ...
 
 # Configuration
 EXCLUDED_FILES = {
