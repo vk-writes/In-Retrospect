@@ -1,9 +1,9 @@
 name: Update Fun Stats
 
 on:
-  workflow_dispatch:  # Allows manual runs
+  workflow_dispatch:  # Manual trigger
   schedule:
-    - cron: '0 12 * * *'  # Daily at 12 PM UTC
+    - cron: '0 12 * * *'  # Every day at 12:00 UTC
 
 jobs:
   update-stats:
@@ -23,7 +23,8 @@ jobs:
       - name: 🐍 Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install spacy textstat vaderSentiment wordcloud matplotlib textblob yake rake-nltk
+          pip install spacy textstat textblob wordcloud scikit-learn
+          python -m textblob.download_corpora
           python -m spacy download en_core_web_sm
 
       - name: 📁 List Files for Debugging
@@ -34,19 +35,21 @@ jobs:
       - name: 🧠 Run Stats Script
         run: python generate_stats.py
 
-      - name: 📄 Display Output File
-        run: cat stats.html || echo "❌ stats.html not found"
+      - name: 🖼️ Display Output Files
+        run: |
+          cat stats.html || echo "❌ stats.html not found"
+          ls -l wordcloud.png || echo "❌ wordcloud.png not found"
 
-      - name: 🚀 Commit Stats
+      - name: 🚀 Commit Updated Files
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
-          git add stats.html
-          git diff --quiet && git diff --staged --quiet || git commit -m "🤖 Auto-update stats"
+          git add stats.html wordcloud.png
+          git diff --cached --quiet || git commit -m "🤖 Auto-update stats"
           git pull --rebase
           git push
 
-      - name: 📦 Upload stats.html Artifact (for debugging)
+      - name: 📦 Upload stats.html (Artifact for Debugging)
         uses: actions/upload-artifact@v4
         with:
           name: stats
