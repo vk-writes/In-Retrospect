@@ -23,6 +23,7 @@ h1 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .stat-card {
@@ -50,6 +51,41 @@ h1 {
 .stat-card li {
   font-size: 0.95rem;
   margin: 0.3rem 0;
+}
+
+.stat-section {
+  margin-top: 2rem;
+}
+
+.stat-section h2 {
+  font-size: 1.7rem;
+  font-family: 'Alegreya SC', serif;
+  color: var(--heading-color);
+  border-bottom: 1px solid var(--heading-border);
+  margin-bottom: 1rem;
+  padding-bottom: 0.3rem;
+}
+
+.stat-section ul {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0 1.5rem;
+  list-style-type: disc;
+}
+
+.stat-section li {
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+}
+
+.stat-section .entity-badge {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  margin: 0.2rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
 }
 
 canvas {
@@ -80,7 +116,7 @@ canvas {
   --accent-color: #88c0d0;
 }
 
-/* Apply background and text colors based on theme */
+/* Theme application */
 body.theme-light {
   background-color: var(--bg);
   color: var(--text-color);
@@ -91,12 +127,14 @@ body.theme-dark {
   color: var(--text-color);
 }
 
-.theme-light .stat-card {
+.theme-light .stat-card,
+.theme-light canvas {
   background-color: var(--card-bg);
   color: var(--text-color);
 }
 
-.theme-dark .stat-card {
+.theme-dark .stat-card,
+.theme-dark canvas {
   background-color: var(--card-bg);
   color: var(--text-color);
 }
@@ -112,7 +150,7 @@ a:hover {
   color: var(--heading-color);
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 600px) {
   body {
     padding: 1rem;
@@ -120,5 +158,9 @@ a:hover {
 
   h1 {
     font-size: 2rem;
+  }
+
+  .stat-section h2 {
+    font-size: 1.4rem;
   }
 }
