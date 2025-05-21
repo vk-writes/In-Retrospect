@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
         <a href="about.html" class="nav-link">About</a>
         <a href="contact.html" class="nav-link">Contact</a>
       </nav>
-      <button id="darkModeToggle" class="dark-toggle" aria-label="Toggle dark mode">🌓 Dark Mode</button>
     </div>
     <div id="overlay"></div>
     <button class="hamburger" id="openSidebar" aria-label="Open menu">&#9776;</button>
+    <button id="darkModeToggle" class="dark-toggle" aria-label="Toggle dark mode">🌓 Dark Mode</button>
   `;
 
   document.body.insertAdjacentHTML("afterbegin", sidebarHTML);
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
   checkScreenSize();
   window.addEventListener("resize", checkScreenSize);
 
-  // ✅ Load footer.html + insert year
+  // Load footer.html + insert year
   fetch("footer.html")
     .then(res => res.text())
     .then(data => {
