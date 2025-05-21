@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap');
 /* Nord Theme Palette */
 :root {
   --nord0: #2e3440;
@@ -55,6 +56,7 @@ strong {
 }
 
 h1, h2, h3, h4 {
+  font-family: 'EB Garamond', serif;
   color: var(--nord6);
   font-weight: 600;
   margin-top: 2rem;
@@ -62,6 +64,7 @@ h1, h2, h3, h4 {
   border-bottom: 2px solid var(--nord2);
   padding-bottom: 0.3rem;
 }
+
 
 h1 {
   font-size: 2.2rem;
