@@ -20,11 +20,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      - run: pip install spacy
+      - run: python -m spacy download en_core_web_sm
+    
       - name: 📁 List Files for Debugging
         run: |
           ls -la
           find . -name "*.html"
-
+         
       - name: 🧠 Run Stats Script
         run: python generate_stats.py
 
