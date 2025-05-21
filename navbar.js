@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <a href="articles.html" class="nav-link">Articles</a>
         <a href="about.html" class="nav-link">About</a>
         <a href="contact.html" class="nav-link">Contact</a>
+        <a href="stats.html" class="nav-link">📊 Fun Stats</a>
       </nav>
     </div>
     <div id="overlay"></div>
