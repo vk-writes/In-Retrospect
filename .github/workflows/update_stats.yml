@@ -17,7 +17,7 @@ jobs:
 
       - name: 🐍 Set up Python and Install Dependencies
         run: |
-          pip install spacy textstat nltk vaderSentiment wordcloud matplotlib
+          pip install spacy textstat nltk vaderSentiment wordcloud matplotlib textblob rake-nltk
           python -m spacy download en_core_web_sm
           python -c "import nltk; nltk.download('stopwords')"
 
