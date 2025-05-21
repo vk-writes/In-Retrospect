@@ -122,6 +122,19 @@ p a[href^="http"]:after {
   font-size: 0.8em;
   color: var(--nord3);
 }
+.home-button {
+  display: inline-block;
+  background-color: var(--nord10);
+  color: var(--nord6);
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+.home-button:hover {
+  background-color: var(--nord9);
+}
 
 /* Responsive tweaks */
 @media (max-width: 600px) {
