@@ -7,7 +7,7 @@ from datetime import datetime
 from textstat import flesch_reading_ease, flesch_kincaid_grade
 from textblob import TextBlob
 from wordcloud import WordCloud
-from rake_nltk import Rake
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Load spaCy English model
 nlp = spacy.load("en_core_web_sm")
@@ -44,6 +44,7 @@ POS_FULL_NAMES = {
     "SPACE": "Spaces",
 }
 
+
 def analyze_articles():
     total_words = 0
     articles = []
@@ -56,6 +57,7 @@ def analyze_articles():
     entity_counter = Counter()
     keywords = {}
     all_text_for_wordcloud = []
+    article_texts = {}
 
     print("Scanning articles...")
     for filename in os.listdir('.'):
@@ -63,25 +65,22 @@ def analyze_articles():
             print(f"  Processing {filename}")
             with open(filename, 'r', encoding='utf-8') as f:
                 raw_html = f.read()
-                # Remove HTML tags for text analysis
                 text = re.sub(r'<[^>]+>', ' ', raw_html)
                 text_lower = text.lower()
                 doc = nlp(text_lower)
 
                 articles.append(filename)
                 total_words += len([t for t in doc if t.is_alpha])
+                article_texts[filename] = text  # Save original case version for TF-IDF
 
-                # Word counts and POS counts (alpha tokens only)
                 for token in doc:
                     if token.is_alpha and not token.is_stop:
                         word_counter[token.text] += 1
                         pos_counters[token.pos_][token.text] += 1
 
-                # Lexical diversity
                 words = [t.text for t in doc if t.is_alpha]
                 lexical_diversities[filename] = len(set(words)) / len(words) if words else 0
 
-                # Sentence stats (re-parse original text to preserve case and punctuation)
                 doc_full = nlp(text)
                 lengths = [len(sent) for sent in doc_full.sents]
                 avg_sentence_length = sum(lengths) / len(lengths) if lengths else 0
@@ -92,7 +91,6 @@ def analyze_articles():
                     'sentence_count': len(lengths)
                 }
 
-                # Readability
                 flesch_score = flesch_reading_ease(text)
                 fk_grade = flesch_kincaid_grade(text)
                 readabilities[filename] = {
@@ -100,29 +98,39 @@ def analyze_articles():
                     'flesch_kincaid_grade': fk_grade
                 }
 
-                # Sentiment analysis
                 blob = TextBlob(text)
                 sentiments[filename] = {
                     'polarity': blob.sentiment.polarity,
                     'subjectivity': blob.sentiment.subjectivity
                 }
 
-                # Named Entity Recognition (NER)
                 doc_ner = nlp(text)
                 for ent in doc_ner.ents:
                     entity_counter[ent.label_] += 1
 
-                # Keyword extraction using RAKE with custom stopwords
-                rake = Rake(stopwords=STOPWORDS)
-                rake.extract_keywords_from_text(text)
-                keywords[filename] = rake.get_ranked_phrases()[:10]
-
                 all_text_for_wordcloud.append(text)
+
+    # Keyword Extraction with TF-IDF
+    tfidf_vectorizer = TfidfVectorizer(
+        stop_words=STOPWORDS,
+        max_features=1000,
+        ngram_range=(1, 3),
+        sublinear_tf=True
+    )
+    texts_list = list(article_texts.values())
+    tfidf_matrix = tfidf_vectorizer.fit_transform(texts_list)
+    tfidf_feature_names = tfidf_vectorizer.get_feature_names_out()
+
+    for idx, filename in enumerate(article_texts):
+        row = tfidf_matrix[idx].toarray()[0]
+        tfidf_scores = list(zip(tfidf_feature_names, row))
+        sorted_keywords = sorted(tfidf_scores, key=lambda x: x[1], reverse=True)
+        keywords[filename] = [kw for kw, score in sorted_keywords[:10]]
 
     article_lengths = {name: os.path.getsize(name) for name in articles}
     longest_article = max(article_lengths, key=article_lengths.get) if articles else "None"
 
-    # Generate word cloud
+    # Word cloud
     combined_text = " ".join(all_text_for_wordcloud)
     wc = WordCloud(width=800, height=400, background_color='white', stopwords=STOPWORDS).generate(combined_text)
     wc.to_file("wordcloud.png")
