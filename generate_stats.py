@@ -7,7 +7,6 @@ from datetime import datetime
 from textstat import flesch_reading_ease, flesch_kincaid_grade
 from textblob import TextBlob
 from wordcloud import WordCloud
-import matplotlib.pyplot as plt
 import yake  # Lightweight keyword extractor (no NLTK!)
 
 # Load spaCy English model
@@ -21,28 +20,6 @@ EXCLUDED_FILES = {
 STOPWORDS = {
     'the', 'and', 'of', 'to', 'a', 'in', 'that', 'it', 'is', 'was',
     'for', 'with', 'on', 'as', 'at', 'by', 'this', 'be', 'are'
-}
-
-POS_FULL_NAMES = {
-    "ADJ": "Adjectives",
-    "ADP": "Adpositions (Prepositions and Postpositions)",
-    "ADV": "Adverbs",
-    "AUX": "Auxiliary Verbs",
-    "CONJ": "Coordinating Conjunctions",
-    "CCONJ": "Coordinating Conjunctions",
-    "DET": "Determiners",
-    "INTJ": "Interjections",
-    "NOUN": "Nouns",
-    "NUM": "Numerals",
-    "PART": "Particles",
-    "PRON": "Pronouns",
-    "PROPN": "Proper Nouns",
-    "PUNCT": "Punctuation",
-    "SCONJ": "Subordinating Conjunctions",
-    "SYM": "Symbols",
-    "VERB": "Verbs",
-    "X": "Other",
-    "SPACE": "Spaces",
 }
 
 def analyze_articles():
@@ -157,43 +134,37 @@ def analyze_articles():
 
 def generate_html_report(stats):
     html = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <title>Stats Report</title>
-      <style>
-        body {{ font-family: Arial, sans-serif; max-width: 800px; margin: auto; padding: 2rem; background: #fdfaf6; color: #1a1a1a; }}
-        h1 {{ color: #0a9396; border-bottom: 2px solid #94d2bd; padding-bottom: 0.4rem; }}
-        .section {{ margin-bottom: 2rem; }}
-        ul {{ list-style: none; padding: 0; }}
-        li {{ margin-bottom: 0.3rem; }}
-      </style>
-    </head>
-    <body>
-      <h1>Stats Report</h1>
-      <div class="section">
-        <strong>Last Updated:</strong> {stats['last_updated']}<br/>
-        <strong>Article Count:</strong> {stats['article_count']}<br/>
-        <strong>Total Words:</strong> {stats['total_words']}<br/>
-        <strong>Average Words per Article:</strong> {stats['avg_words']}<br/>
-        <strong>Longest Article:</strong> {stats['longest_article']}<br/>
-      </div>
-      <div class="section">
-        <h2>Top Words</h2>
-        <ul>
-          {''.join(f"<li>{word}</li>" for word in stats['top_words'])}
-        </ul>
-      </div>
-      <div class="section">
-        <h2>Entity Counts (Top 10)</h2>
-        <ul>
-          {''.join(f"<li>{entity}: {count}</li>" for entity, count in stats['entity_counts'])}
-        </ul>
-      </div>
-    </body>
-    </html>
-    """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Stats Report</title>
+  <link rel="stylesheet" href="style2.css" />
+</head>
+<body>
+  <h1>Stats Report</h1>
+  <div class="section">
+    <strong>Last Updated:</strong> {stats['last_updated']}<br/>
+    <strong>Article Count:</strong> {stats['article_count']}<br/>
+    <strong>Total Words:</strong> {stats['total_words']}<br/>
+    <strong>Average Words per Article:</strong> {stats['avg_words']}<br/>
+    <strong>Longest Article:</strong> {stats['longest_article']}<br/>
+  </div>
+  <div class="section">
+    <h2>Top Words</h2>
+    <ul>
+      {''.join(f"<li>{word}</li>" for word in stats['top_words'])}
+    </ul>
+  </div>
+  <div class="section">
+    <h2>Entity Counts (Top 10)</h2>
+    <ul>
+      {''.join(f"<li>{entity}: {count}</li>" for entity, count in stats['entity_counts'])}
+    </ul>
+  </div>
+</body>
+</html>
+"""
     with open("stats.html", "w", encoding="utf-8") as f:
         f.write(html)
 
