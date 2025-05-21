@@ -23,7 +23,7 @@ jobs:
       - name: 🐍 Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install spacy textstat vaderSentiment wordcloud matplotlib textblob yake
+          pip install spacy textstat vaderSentiment wordcloud matplotlib textblob yake rake-nltk
           python -m spacy download en_core_web_sm
 
       - name: 📁 List Files for Debugging
