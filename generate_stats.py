@@ -168,7 +168,7 @@ def generate_html(stats):
 <head>
   <meta charset="UTF-8" />
   <title>Fun Stats</title>
-  <link rel="stylesheet" href="style2.css" />
+  <link rel="stylesheet" href="style3.css">
   <script src="navbar.js" defer></script>
 </head>
 <body>
